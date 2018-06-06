@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zqx.dao.UserMapper">
+    <resultMap id="Base_ResultMap" type="com.zqx.pojo.User">
+        <constructor>
+            <idArg column="id" javaType="Integer" jdbcType="INTEGER"/>
+            <arg column="username" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="password" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="email" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="phone" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="question" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="answer" javaType="String" jdbcType="VARCHAR"/>
+            <arg column="role" javaType="Integer" jdbcType="INTEGER"/>
+            <arg column="create_time" javaType="Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        SELECT
+        id,username,password,email,phone,question,answer,role,
+        create_time,update_time
+    </sql>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.zqx.pojo.User">
+        UPDATE mak_user
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="question != null">
+                question = #{question},
+            </if>
+            <if test="answer != null">
+                answer = #{answer},
+            </if>
+            <if test="role != null">
+                role = #{role},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time},
+            </if>
+            <if test="update_time != null">
+                update_time = now(),
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.zqx.pojo.User">
+         UPDATE mak_user
+         SET
+            id = #{id},
+            username = #{username},
+            password = #{password},
+            email = #{email},
+            phone = #{phone},
+            question = #{question},
+            answer = #{answer},
+            role = #{role},
+            create_time = #{create_time},
+            update_time = now()
+          WHERE id = #{id}
+    </update>
+
+    <update id="updatePasswordByUsername" parameterType="map">
+        UPDATE mak_user
+        SET password = #{passwordNew},update_time = now()
+        WHERE username = #{username}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="Integer">
+        DELETE FROM mak_user
+        WHERE id = #{id}
+    </delete>
+
+    <select id="selectByPrimaryKey" resultType="com.zqx.pojo.User">
+
+        <include refid="Base_Column_List"/>
+        FROM mak_user
+        WHERE id = #{id}
+    </select>
+
+    <select id="checkUserName" resultType="java.lang.Integer" parameterType="String">
+        SELECT COUNT(*) FROM mak_user
+        WHERE username = #{username}
+    </select>
+
+    <select id="checkEmail" resultType="java.lang.Integer" parameterType="String">
+        SELECT COUNT(1) FROM mak_user
+        WHERE email = #{email}
+    </select>
+
+    <select id="selectLogin" resultMap="Base_ResultMap" parameterType="map">
+        <include refid="Base_Column_List"/>
+        FROM mak_user
+        WHERE username = #{username}
+        AND password = #{password}
+    </select>
+
+    <select id="selectQuestionByUsername" resultType="java.lang.String" parameterType="String">
+        SELECT question
+        FROM mak_user
+        WHERE username = #{username}
+    </select>
+
+    <select id="checkAnswer" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(1)
+        FROM mak_user
+        WHERE username = #{username}
+        And question = #{question}
+        And answer = #{answer}
+    </select>
+    <select id="checkPassword" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(1)
+        FROM mak_user
+        WHERE id = #{userId}
+        And password = #{password}
+    </select>
+
+    <select id="checkEmailByUserId" resultType="java.lang.Integer" parameterType="map">
+        SELECT count(1)
+        FROM mak_user
+        WHERE email = #{email}
+        And id != #{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.zqx.pojo.User">
+        INSERT INTO mak_user(id,username,password,email,phone,question,
+          answer,role,create_time,update_time)
+        VALUES (#{id},#{username},#{password},
+          #{email},#{phone},#{question},
+          #{answer},#{role},now(),now())
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.zqx.pojo.User">
+        INSERT INTO mak_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="question != null">
+                question,
+            </if>
+            <if test="answer != null">
+                answer,
+            </if>
+            <if test="role != null">
+                role,
+            </if>
+            <if test="create_time != null">
+                create_time,
+            </if>
+            <if test="update_time != null">
+                update_time,
+            </if>
+        </trim>
+
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="username != null">
+                #{username},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="email != null">
+                #{email},
+            </if>
+            <if test="phone != null">
+                #{phone},
+            </if>
+            <if test="question != null">
+                #{question},
+            </if>
+            <if test="answer != null">
+                #{answer},
+            </if>
+            <if test="role != null">
+                #{role},
+            </if>
+            <if test="create_time != null">
+                now(),
+            </if>
+            <if test="update_time != null">
+                now(),
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
